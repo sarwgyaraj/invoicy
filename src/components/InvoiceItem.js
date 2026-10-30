@@ -1,8 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
-import { BiTrash } from "react-icons/bi";
+import { BiTrash, BiPlus } from "react-icons/bi";
 import EditableField from './EditableField';
 
 class InvoiceItem extends React.Component {
@@ -12,31 +11,44 @@ class InvoiceItem extends React.Component {
     var rowDel = this.props.onRowDel;
     var itemTable = this.props.items.map(function(item) {
       return (
-        <ItemRow onItemizedItemEdit={onItemizedItemEdit} item={item} onDelEvent={rowDel.bind(this)} key={item.id} currency={currency}/>
-      )
+        <ItemRow
+          onItemizedItemEdit={onItemizedItemEdit}
+          item={item}
+          onDelEvent={rowDel.bind(this)}
+          key={item.id}
+          currency={currency}
+        />
+      );
     });
     return (
-      <div>
-        <Table>
+      <div className="table-responsive my-4">
+        <table className="invoice-table">
           <thead>
             <tr>
-              <th>ITEM</th>
-              <th>QTY</th>
-              <th>PRICE/RATE</th>
-              <th className="text-center">ACTION</th>
+              <th style={{ width: '50%' }}>Item Description</th>
+              <th style={{ width: '15%' }}>Qty</th>
+              <th style={{ width: '25%' }}>Price / Rate</th>
+              <th style={{ width: '10%' }} className="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
             {itemTable}
           </tbody>
-        </Table>
-        <Button className="fw-bold" onClick={this.props.onRowAdd}>Add Item</Button>
+        </table>
+        <div className="pt-3">
+          <Button
+            type="button"
+            className="btn-add-item d-inline-flex align-items-center"
+            onClick={this.props.onRowAdd}
+          >
+            <BiPlus size={18} className="me-1" /> Add Line Item
+          </Button>
+        </div>
       </div>
     );
-
   }
-
 }
+
 class ItemRow extends React.Component {
   onDelEvent() {
     this.props.onDelEvent(this.props.item);
@@ -44,61 +56,69 @@ class ItemRow extends React.Component {
   render() {
     return (
       <tr>
-        <td style={{width: '100%'}}>
+        <td style={{ width: '50%' }}>
           <EditableField
             onItemizedItemEdit={this.props.onItemizedItemEdit}
             cellData={{
-            type: "text",
-            name: "name",
-            placeholder: "Item name",
-            value: this.props.item.name,
-            id: this.props.item.id,
-          }}/>
+              type: "text",
+              name: "name",
+              placeholder: "Item or Service Name",
+              value: this.props.item.name,
+              id: this.props.item.id,
+            }}
+          />
           <EditableField
             onItemizedItemEdit={this.props.onItemizedItemEdit}
             cellData={{
-            type: "text",
-            name: "description",
-            placeholder: "Item description",
-            value: this.props.item.description,
-            id: this.props.item.id
-          }}/>
+              type: "text",
+              name: "description",
+              placeholder: "Detailed description (optional)",
+              value: this.props.item.description,
+              id: this.props.item.id,
+            }}
+          />
         </td>
-        <td style={{minWidth: '70px'}}>
-          <EditableField
-          onItemizedItemEdit={this.props.onItemizedItemEdit}
-          cellData={{
-            type: "number",
-            name: "quantity",
-            min: 1,
-            step: "1",
-            value: this.props.item.quantity,
-            id: this.props.item.id,
-          }}/>
-        </td>
-        <td style={{minWidth: '130px'}}>
+        <td style={{ width: '15%' }}>
           <EditableField
             onItemizedItemEdit={this.props.onItemizedItemEdit}
             cellData={{
-            leading: this.props.currency,
-            type: "number",
-            name: "price",
-            min: 1,
-            step: "0.01",
-            presicion: 2,
-            textAlign: "text-end",
-            value: this.props.item.price,
-            id: this.props.item.id,
-          }}/>
+              type: "number",
+              name: "quantity",
+              min: 1,
+              step: "1",
+              value: this.props.item.quantity,
+              id: this.props.item.id,
+            }}
+          />
         </td>
-        <td className="text-center" style={{minWidth: '50px'}}>
-          <BiTrash onClick={this.onDelEvent.bind(this)} style={{height: '33px', width: '33px', padding: '7.5px'}} className="text-white mt-1 btn btn-danger"/>
+        <td style={{ width: '25%' }}>
+          <EditableField
+            onItemizedItemEdit={this.props.onItemizedItemEdit}
+            cellData={{
+              leading: this.props.currency,
+              type: "number",
+              name: "price",
+              min: 0,
+              step: "0.01",
+              textAlign: "text-end",
+              value: this.props.item.price,
+              id: this.props.item.id,
+            }}
+          />
+        </td>
+        <td style={{ width: '10%' }} className="text-center">
+          <button
+            type="button"
+            onClick={this.onDelEvent.bind(this)}
+            className="btn-delete-item mx-auto"
+            title="Remove line item"
+          >
+            <BiTrash size={16} />
+          </button>
         </td>
       </tr>
     );
-
   }
-
 }
 
 export default InvoiceItem;
